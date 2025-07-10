@@ -1,0 +1,1 @@
+链式启动： prompt_verify.show_password_window()——>prompt_verify.show_progress_message——>program_over.close_program——>program_open.open_process——>
