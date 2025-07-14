@@ -42,13 +42,15 @@ def open_process():
         exe_path2 = r'"C:\Program Files (x86)\WN\Proxy4HisIns\ProxySvr4HIS.exe"'
         # subprocess.Popen(exe_path2)
         # wait_for_process("ProxySvr4HIS.exe")
-        if run_as_admin(exe_path2):
-            if wait_for_process("ProxySvr4HIS.exe"):
-                # print("ProxySvr4HIS.exe 启动成功")
-            else:
-                print("等待 ProxySvr4HIS.exe 启动超时")
-        else:
-            print("无法以管理员身份启动 ProxySvr4HIS.exe")
+        # if run_as_admin(exe_path2):
+        #     if wait_for_process("ProxySvr4HIS.exe"):
+        #         print("ProxySvr4HIS.exe 启动成功")
+        #     else:
+        #         print("等待 ProxySvr4HIS.exe 启动超时")
+        # else:
+        #     print("无法以管理员身份启动 ProxySvr4HIS.exe")
+        run_as_admin(exe_path2)
+        wait_for_process("ProxySvr4HIS.exe")
         # 异步启动第三个程序
         exe_path3 = r'"C:\Program Files\MountTaiSoftware\CLodop64\CLodopPrint64.exe"'
         subprocess.Popen(exe_path3)
