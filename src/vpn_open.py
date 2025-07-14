@@ -34,14 +34,14 @@ def vpn_auto():
 
     if target_window:
         target_window.activate()
-        time.sleep(1)
+        time.sleep(24)
         # 地址界面跳转
         for _ in range(2):
             pyautogui.press('tab')
             time.sleep(0.3)
-        pyautogui.press('enter')
+            pyautogui.press('enter')
         # 登录界面跳转 可以升级为按图片检测
-        time.sleep(14)
+        time.sleep(5.5)
         for _ in range(6):
             pyautogui.press('tab')
             time.sleep(0.3)

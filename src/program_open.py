@@ -1,4 +1,22 @@
+import ctypes
 
+def run_as_admin(exe_path):
+    """
+    使用 ShellExecuteW 以管理员身份运行指定的 exe 文件
+    :param exe_path: exe 文件路径（字符串）
+    :return: 成功返回 True，否则返回 False
+    """
+    try:
+        res = ctypes.windll.shell32.ShellExecuteW(
+            None, "runas", exe_path, None, None, 1)
+        if res <= 32:
+            print(f"启动失败，错误码: {res}")
+            return False
+        print(f"已请求以管理员身份运行: {exe_path}")
+        return True
+    except Exception as e:
+        print(f"发生异常: {e}")
+        return False
 
 # import subprocess
 import psutil
@@ -22,8 +40,15 @@ def open_process():
     if wait_for_process("EasyConnect.exe"):
         # 异步启动第二个程序（不阻塞）
         exe_path2 = r'"C:\Program Files (x86)\WN\Proxy4HisIns\ProxySvr4HIS.exe"'
-        subprocess.Popen(exe_path2)
-        wait_for_process("ProxySvr4HIS.exe")
+        # subprocess.Popen(exe_path2)
+        # wait_for_process("ProxySvr4HIS.exe")
+        if run_as_admin(exe_path2):
+            if wait_for_process("ProxySvr4HIS.exe"):
+                print("ProxySvr4HIS.exe 启动成功")
+            else:
+                print("等待 ProxySvr4HIS.exe 启动超时")
+        else:
+            print("无法以管理员身份启动 ProxySvr4HIS.exe")
         # 异步启动第三个程序
         exe_path3 = r'"C:\Program Files\MountTaiSoftware\CLodop64\CLodopPrint64.exe"'
         subprocess.Popen(exe_path3)
