@@ -44,7 +44,7 @@ def open_process():
         # wait_for_process("ProxySvr4HIS.exe")
         if run_as_admin(exe_path2):
             if wait_for_process("ProxySvr4HIS.exe"):
-                print("ProxySvr4HIS.exe 启动成功")
+                # print("ProxySvr4HIS.exe 启动成功")
             else:
                 print("等待 ProxySvr4HIS.exe 启动超时")
         else:
