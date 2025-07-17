@@ -10,6 +10,7 @@ app_window = None
 status_label = None
 PASSWORD = "0605xz"  # 默认密码，可修改
 EXPIRY_DATE = datetime(2025, 8, 31)  # 密码有效期截止日
+VERSION = "v1.1"  # 版本号配置（在这里修改版本）
 
 def verify_password():
     # 获取当前日期
@@ -66,6 +67,17 @@ def show_password_window():
         font=("微软雅黑", 10),
         width=10,
     ).pack(pady=10)
+    # 版本信息标签（右下角）
+    tk.Label(
+        password_window,
+        text=VERSION,
+        font=("微软雅黑", 8),
+        fg="gray"  # 灰色文字，不抢眼
+    ).place(
+        x=285,  # 距离窗口左侧260像素（根据窗口宽度300调整）
+        y=120,  # 距离窗口顶部120像素（根据窗口高度150调整）
+        anchor="ne"  # 锚点设为右上角，确保文字靠右对齐
+    )
 
     # 绑定回车键到验证函数
     password_window.bind("<Return>", lambda event: verify_password())
