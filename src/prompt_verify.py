@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
 import program_over
+from window_icon import get_icon_path
 
 # 全局变量
 app_window = None
@@ -34,12 +35,14 @@ def verify_password():
 def show_password_window():
     """显示密码输入窗口"""
     global password_window, password_entry
-
+    icon_path = get_icon_path()
     password_window = tk.Tk()
+    password_window.withdraw()
     password_window.title("身份验证")
     password_window.geometry("300x150")
+    password_window.iconbitmap(icon_path)
     password_window.resizable(False, False)
-
+    password_window.deiconify()  # 显示窗体
     # 居中显示
     screen_width = password_window.winfo_screenwidth()
     screen_height = password_window.winfo_screenheight()
@@ -88,17 +91,20 @@ def show_password_window():
 def show_progress_message():
     """显示恢复进度窗口"""
     global app_window, status_label
-
+    icon_path = get_icon_path()
     # 创建主窗口
     app_window = tk.Tk()
+    app_window.withdraw() # 隐藏窗体
     app_window.title("系统提示")
-
+    app_window.iconbitmap(icon_path)
+    app_window.resizable(False, False)
+    app_window.deiconify() # 显示窗体
     # 设置窗口大小并定位到左下角
     window_width = 400
-    window_height = 150
+    window_height = 110
     screen_height = app_window.winfo_screenheight()
     x = 0  # 距屏幕左侧0像素
-    y = screen_height - window_height - 100  # 距屏幕底部100像素
+    y = screen_height - window_height - 80  # 距屏幕底部100像素
     app_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
     # 创建标签（文本完全居中）

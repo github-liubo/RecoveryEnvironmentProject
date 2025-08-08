@@ -1,7 +1,9 @@
+import os
 import subprocess
 import pyautogui
 import time
 import pygetwindow as gw
+from identify import click_image_in_window
 
 def vpn_auto():
     # 程序路径（注意路径中如果有空格，需要用双引号包裹）
@@ -34,29 +36,24 @@ def vpn_auto():
 
     if target_window:
         target_window.activate()
-        time.sleep(24)
-        # 地址界面跳转
-        for _ in range(2):
-            pyautogui.press('tab')
-            time.sleep(0.3)
+        login_img_path = os.path.abspath("../assets/images/login.PNG")
+        found_login = click_image_in_window(target_window, login_img_path)
+        # 根据返回结果判断是否执行后续操作
+        if found_login:
+            print("图片已找到并点击")
+        else:
+            print("图片未找到，执行备用方案")
+            time.sleep(14)
+            # 地址界面跳转
+            for _ in range(2):
+                pyautogui.press('tab')
+                time.sleep(0.3)
+                pyautogui.press('enter')
+            # 登录界面跳转 可以升级为按图片检测
+            time.sleep(5.5)
+            for _ in range(6):
+                pyautogui.press('tab')
+                time.sleep(0.3)
             pyautogui.press('enter')
-        # 登录界面跳转 可以升级为按图片检测
-        time.sleep(5.5)
-        for _ in range(6):
-            pyautogui.press('tab')
-            time.sleep(0.3)
-        pyautogui.press('enter')
     else:
         print("找不到目标窗口，请确认标题是否正确。")
-        # target_window.close()
-    # time.sleep(1.5)
-    # # 最小化窗口
-    # target_window.activate()
-    # time.sleep(1)
-    # try:
-    #     target_window.minimize()
-    #     time.sleep(0.5)
-    #     target_window.close()
-    #     print("窗口已最小化")
-    # except Exception as e:
-    #     print(f"最小化失败: {e}")

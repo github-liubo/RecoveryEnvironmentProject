@@ -34,3 +34,4 @@ def close_program():
     from prompt_verify import app_window
     import program_open
     app_window.after(500, program_open.open_process)
+    print(psutil.cpu_percent())
