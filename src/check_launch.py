@@ -1,6 +1,9 @@
 import json
 import os
 import tkinter as tk
+from email_verify import generate_verification_code,send_code_to_netease,verify_code_input
+from tkinter import messagebox
+from window_icon import get_icon_path
 
 # 全局变量：最大启动次数和存储文件路径
 MAX_LAUNCH_COUNT = 12  # 最大启动次数
@@ -29,22 +32,42 @@ def save_launch_count(count):
 
 
 def check_launch_limit():
-    """检查启动次数是否超限"""
     current_count = load_launch_count()
-    new_count = current_count + 1  # 本次启动计数+1
-    save_launch_count(new_count)  # 立即保存次数
 
-    if new_count > MAX_LAUNCH_COUNT:
-        show_limit_window()  # 超限则显示提示窗口
-        return False  # 超限
-    return True  # 未超限
+    if current_count < MAX_LAUNCH_COUNT:
+        save_launch_count(current_count + 1)
+        return True
+    else:
+        show_limit_window()
+        code = generate_verification_code()
+        print(f"调试：生成的验证码为{code}")
 
+        # 修复：补充接收者邮箱参数
+        if not send_code_to_netease(code):
+            messagebox.showerror("错误", "发送验证码失败，请检查邮箱配置")
+            return False
+
+        # 验证输入（此时 verify_code_input 会正确返回结果）
+        if verify_code_input(code):
+            save_launch_count(1)  # 重置次数
+            messagebox.showinfo("成功", "验证码正确，次数已重置")  # 会正常弹出
+            return True
+        else:
+            messagebox.showerror("失败", "验证码错误，无法继续使用")
+            return False
 
 def show_limit_window():
-    """显示使用次数超限窗口"""
-    limit_window = tk.Tk()
+    """显示使用次数超限窗口（修复为子窗口）"""
+    icon_path = get_icon_path()
+    # 获取全局主窗口（由主函数初始化的 root）
+    root = tk._default_root
+    if root is None:
+        root = tk.Tk()
+        root.withdraw()
+    limit_window = tk.Toplevel(root)
+    limit_window.withdraw()
     limit_window.title("使用限制")
-    limit_window.geometry("350x150")
+    limit_window.geometry("300x150")
     limit_window.resizable(False, False)
 
     # 居中显示窗口
@@ -53,11 +76,12 @@ def show_limit_window():
     x = (screen_width // 2) - 175
     y = (screen_height // 2) - 75
     limit_window.geometry(f"+{x}+{y}")
-
+    limit_window.iconbitmap(icon_path)
+    limit_window.deiconify()  # 显示窗体
     # 超限提示文本
     tk.Label(
         limit_window,
-        text="使用次数超限，请联系管理员重新签注后使用",
+        text="使用次数超限，请输入管理员验证码",
         font=("微软雅黑", 12, "bold"),
         fg="red"
     ).pack(pady=20)
@@ -71,4 +95,5 @@ def show_limit_window():
         width=10
     ).pack(pady=10)
 
-    limit_window.mainloop()
+    # 替换 mainloop() 为 wait_window()，避免嵌套事件循环
+    limit_window.wait_window(limit_window)

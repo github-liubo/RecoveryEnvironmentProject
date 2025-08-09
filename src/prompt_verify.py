@@ -5,13 +5,12 @@ from tkinter import messagebox
 from datetime import datetime
 import program_over
 from window_icon import get_icon_path
-
 # 全局变量
 app_window = None
 status_label = None
 PASSWORD = "0605xz"  # 默认密码，可修改
 EXPIRY_DATE = datetime(2025, 8, 31)  # 密码有效期截止日
-VERSION = "v1.13"  # 版本号配置（在这里修改版本）
+VERSION = "v1.15"  # 版本号配置（在这里修改版本）
 
 def verify_password():
     # 获取当前日期
@@ -36,7 +35,12 @@ def show_password_window():
     """显示密码输入窗口"""
     global password_window, password_entry
     icon_path = get_icon_path()
-    password_window = tk.Tk()
+    # 获取全局主窗口（由主函数初始化的 root）
+    root = tk._default_root
+    if root is None:
+        root = tk.Tk()
+        root.withdraw()
+    password_window = tk.Toplevel(root)
     password_window.withdraw()
     password_window.title("身份验证")
     password_window.geometry("300x150")
@@ -49,6 +53,14 @@ def show_password_window():
     password_window.geometry(f"+{x}+{y}")
     password_window.iconbitmap(icon_path)
     password_window.deiconify()  # 显示窗体
+    def on_close():
+        # 关闭窗口并终止相关流程
+        password_window.destroy()
+        # 如果主程序依赖root循环，可调用root.quit()确保退出
+        if root:
+            root.quit()  # 终止主事件循环，避免卡住
+    # 绑定关闭按钮事件
+    password_window.protocol("WM_DELETE_WINDOW", on_close)
     # 密码提示
     tk.Label(
         password_window,
@@ -84,7 +96,7 @@ def show_password_window():
     # 绑定回车键到验证函数
     password_window.bind("<Return>", lambda event: verify_password())
 
-    password_window.mainloop()
+    password_window.wait_window(password_window)
 
 
 def show_progress_message():
@@ -127,23 +139,19 @@ def show_completion_message():
     if status_label and app_window:
         # 更新文本,青草色
         status_label.config(text="恢复完毕，5秒后关闭窗口",fg="#32CD32")
-
-        # 设置5秒后关闭窗口
-        app_window.after(5000, app_window.destroy)
+        # 5秒后关闭恢复窗口，并彻底终止程序
+        def close_and_quit():
+            # global root  # 显式引用全局root
+            # 先关闭恢复窗口
+            if app_window.winfo_exists():  # 检查窗口是否存在
+                app_window.destroy()
+                # 获取 root 并退出主循环
+            root = tk._default_root
+            if root and root.winfo_exists():
+                # root.quit()  # 终止 mainloop
+                root.destroy()
+            print("恢复任务已完成，程序退出")
+        app_window.after(5000, close_and_quit)
         print("恢复任务已完成")
     else:
         print("窗口未初始化，无法更新状态")
-
-
-
-# if __name__ == "__main__":
-#     # show_password_window()  # 程序入口：先显示密码窗口
-#     # 第一个函数独立触发：显示进度提示
-#     Thread(target=show_password_window).start()
-#    show_password_window()
-#     # 模拟后台任务（也可以是其他触发方式）
-#     time.sleep(20)  # 确保窗口已启动
-#     Thread(target=show_completion_message).start()
-#
-#     # 注意：这里不能直接调用 app_window.mainloop() 外的逻辑，
-#     # 因为 tkinter 的 mainloop() 是阻塞的。
