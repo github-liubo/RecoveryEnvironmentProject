@@ -1,8 +1,39 @@
 import pyautogui
 import time
 import pygetwindow as gw  # 用于检查窗口是否存在
+import win32gui
 
-def click_image_in_window(window, image_path, confidence=0.9, timeout=10):
+
+def enum_window(hwnd, windows):
+    if win32gui.IsWindowVisible(hwnd):
+        window_title = win32gui.GetWindowText(hwnd)
+        if window_title:  # 忽略没有标题的窗口
+            rect = win32gui.GetWindowRect(hwnd)
+            windows.append({
+                'hwnd': hwnd,
+                'title': window_title,
+                'left': rect[0],
+                'top': rect[1],
+                'width': rect[2] - rect[0],
+                'height': rect[3] - rect[1]
+            })
+
+
+def get_window_rect_by_title(title):
+    """
+    使用 win32gui 获取特定标题的窗口位置和大小。
+    :param title: 目标窗口的标题（部分匹配）
+    :return: 窗口信息字典或 None
+    """
+    windows = []
+    win32gui.EnumWindows(enum_window, windows)
+    for w in windows:
+        if title in w['title']:
+            return w
+    return None
+
+
+def click_image_in_window(window, image_path, confidence=0.8, timeout=10):
     """
     在指定窗口中持续查找图片，直到找到并点击，或超时。
 
@@ -13,20 +44,30 @@ def click_image_in_window(window, image_path, confidence=0.9, timeout=10):
     :return: bool - 是否成功点击
     """
     print(f"正在查找图片: {image_path} (匹配精度: {confidence})")
+    # print(f"目标窗口标题: {window.title}")  # 打印传入的窗口标题
+    # all_titles = gw.getAllTitles()
+    # print(f"所有窗口标题: {all_titles}")  # 打印系统中所有窗口标题
+    # if window.title not in all_titles:
+    #     print("目标窗口未匹配到！")
 
     end_time = time.time() + timeout
 
     while time.time() < end_time:
         try:
-            # === 关键修复：使用 pygetwindow 检查窗口是否还存在 ===
-            all_titles = gw.getAllTitles()
-            if window.title not in all_titles:
-                print("目标窗口已关闭或不存在")
-                return False
+            time.sleep(0.5)  # 控制查找频率
 
-            # 获取窗口位置和大小
-            x, y = window.left, window.top
-            width, height = window.width, window.height
+            # 使用 win32gui 获取窗口信息作为备选方案
+            alt_window_info = get_window_rect_by_title(window.title)
+            if alt_window_info:
+                x, y, width, height = alt_window_info['left'], alt_window_info['top'], alt_window_info['width'], \
+                alt_window_info['height']
+            else:
+                # 如果 win32gui 未能找到，则尝试使用 pygetwindow
+                if window.title not in gw.getAllTitles():
+                    print("目标窗口已关闭或不存在")
+                    return False
+                x, y = window.left, window.top
+                width, height = window.width, window.height
 
             # 检查窗口是否最小化（宽高为0）
             if width <= 0 or height <= 0:
@@ -57,8 +98,6 @@ def click_image_in_window(window, image_path, confidence=0.9, timeout=10):
             # 打印异常但不停止循环
             print(f"❌ 查找图片时发生异常: {e}")
             time.sleep(0.5)
-
-        time.sleep(0.5)  # 控制查找频率
 
     print(f"❌ 超时({timeout}s)：在窗口中未找到图片 {image_path}")
     return False

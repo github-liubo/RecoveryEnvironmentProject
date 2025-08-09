@@ -36,7 +36,8 @@ def wait_for_process(process_name, timeout=40):
     return False
 
 def open_process():
-    vpn_auto()
+    # vpn_auto()
+    vpn_auto_thread()
     if wait_for_process("EasyConnect.exe"):
         # 异步启动第二个程序（不阻塞）
         exe_path2 = r'"C:\Program Files (x86)\WN\Proxy4HisIns\ProxySvr4HIS.exe"'
