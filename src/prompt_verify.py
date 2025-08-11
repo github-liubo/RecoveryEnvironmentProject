@@ -13,7 +13,7 @@ def show_progress_message():
     """显示恢复进度窗口（带自定义美化标题栏）"""
     global app_window, status_label
     icon_path = get_icon_path()
-
+    print(f"拿到的图像地址：{icon_path}")
     # 存储拖拽相关数据（用于标题栏拖拽）
     drag_data = [0, 0]  # [x, y]
 
@@ -49,6 +49,8 @@ def show_progress_message():
         try:
             # 加载并缩放图标以适应标题栏（30x30）
             icon_img = tk.PhotoImage(file=icon_path)
+            print(f"自定义任务栏处理的图像:{icon_img}")
+            title_bar.image = icon_img
             # 计算缩放比例（确保图标不超过30x30）
             scale_w = max(1, icon_img.width() // 30)
             scale_h = max(1, icon_img.height() // 30)
