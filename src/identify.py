@@ -89,6 +89,8 @@ def click_image_in_window(window, image_path, confidence=0.8, timeout=10):
                 center_x, center_y = pyautogui.center(location)
                 pyautogui.click(center_x, center_y)
                 print(f"✅ 找到图片 {image_path}，已在位置 ({center_x}, {center_y}) 点击")
+                # 关键：点击后将鼠标移开目标图片区域（比如移到窗口右上角）
+                pyautogui.moveTo(x + width - 10, y + 10)  # 移到窗口右上角（远离图片）
                 return True
 
         except pyautogui.ImageNotFoundException:

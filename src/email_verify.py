@@ -230,13 +230,23 @@ def verify_code_input(code):
         font=("微软雅黑", 14),  # 增大字体高度
         width=8,
         justify="center",
-        show="*",
+        # show="*",
         bd=2  # 边框稍粗
     )
     # 用正值padx调整间距（取消负边距）
     code_entry.pack(side=tk.LEFT, padx=(0, 20))
     # code_entry.focus()
 
+    # 新增：限制输入为6位数字
+    def validate_input(text):
+        # 允许空字符串（用于清空输入框）
+        if not text:
+            return True
+        if len(text) > 6:
+            return False
+        return text.isdigit()
+    validate_cmd = verify_window.register(validate_input)
+    code_entry.config(validate="key", validatecommand=(validate_cmd, "%P"))
     # ======================
     # 确认按钮调整：缩小尺寸
     # ======================

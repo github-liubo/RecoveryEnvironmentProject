@@ -12,7 +12,6 @@ if __name__ == "__main__":
     root.withdraw()  # 隐藏主窗口，不显示界面
 
 
-    
     # 3. 定义主流程函数（将检查逻辑放入主循环任务队列）
     def main_process():
         if check_launch.check_launch_limit():

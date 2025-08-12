@@ -39,13 +39,23 @@ def vpn_auto_thread():
         found_button = False
         found_login = False
         start_time = time.time()
-
-        while time.time() - start_time < 16 and not found_login:
+        max_attempts = 3  # 最大尝试次数
+        attempt_count = 0
+        while time.time() - start_time < 20 and not found_login:
             # 查找第一个图片
             if not found_button:
-                if click_image_in_window(target_window, link_img_path, timeout=1):
-                    print("链接图片已找到并点击")
-                    found_button = True
+                click_success = click_image_in_window(target_window, link_img_path, timeout=1)
+                if click_success:
+                    print("链接图片已找到并点击成功")
+                    found_button = True  # 标记为成功，停止重试
+                    attempt_count = 0  # 成功后重置尝试计数
+                else:
+                    attempt_count += 1
+                    if attempt_count >= max_attempts:
+                        print("达到最大尝试次数，执行备用方案")
+                        break  # 或者考虑其他退出逻辑
+                    click_image_in_window(target_window, link_img_path, timeout=1)
+                    continue
 
             # 检查第二个图片
             if click_image_in_window(target_window, login_img_path, timeout=1):
@@ -53,17 +63,17 @@ def vpn_auto_thread():
                 found_login = True
                 break
         # 处理未找到的情况
-        if not found_button:
-            print("链接图片未找到，执行备用方案")
-            for _ in range(2):
-                pyautogui.press('tab')
-                time.sleep(0.3)
-                pyautogui.press('enter')
-        if found_login:
-            found_login = False
-            click_image_in_window(target_window, login_img_path, timeout=5)
-            if found_login:
-                print("登录图片已找到并点击")
+        # if not found_button:
+        #     print("链接图片未找到，执行备用方案")
+        #     for _ in range(2):
+        #         pyautogui.press('tab')
+        #         time.sleep(0.3)
+        #         pyautogui.press('enter')
+        # if found_login:
+        #     found_login = False
+        #     click_image_in_window(target_window, login_img_path, timeout=5)
+        #     if found_login:
+        #         print("登录图片已找到并点击")
         if not found_login:
             print("登录图片未找到，执行备用方案")
             for _ in range(6):
