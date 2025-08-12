@@ -2,7 +2,8 @@ import pyautogui
 import time
 import pygetwindow as gw  # 用于检查窗口是否存在
 import win32gui
-
+import sys
+import os
 
 def enum_window(hwnd, windows):
     if win32gui.IsWindowVisible(hwnd):
@@ -103,3 +104,15 @@ def click_image_in_window(window, image_path, confidence=0.8, timeout=10):
 
     print(f"❌ 超时({timeout}s)：在窗口中未找到图片 {image_path}")
     return False
+
+
+def resource_path(relative_path):
+    """ 获取资源的绝对路径，兼容开发环境和打包环境 """
+    try:
+        # PyInstaller 创建临时文件夹，路径存储在 _MEIPASS 中
+        base_path = sys._MEIPASS
+    except Exception:
+        current_script_dir = os.path.abspath(os.path.dirname(__file__))  # src目录
+        base_path = os.path.dirname(current_script_dir)  # 项目根目录（src的上一级）
+
+    return os.path.join(base_path, relative_path)

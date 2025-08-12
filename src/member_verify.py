@@ -127,7 +127,7 @@ def check_date_limit():
     if current_date <= current_valid_date:
         return True
     else:
-        messagebox.showinfo("试用期限制", "使用期限已过，请通过邮箱验证码延长")
+        messagebox.showinfo("使用限制", "使用期限已过，请通过邮箱验证码延长")
 
         code = generate_verification_code()
         print(f"调试：生成的验证码为{code}")

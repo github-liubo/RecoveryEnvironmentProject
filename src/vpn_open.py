@@ -4,7 +4,7 @@ import pyautogui
 import time
 import pygetwindow as gw
 import threading
-from identify import click_image_in_window
+from identify import click_image_in_window, resource_path
 
 
 def vpn_auto_thread():
@@ -33,47 +33,35 @@ def vpn_auto_thread():
         # 激活窗口
         target_window.activate()
         # 图片路径
-        link_img_path = os.path.abspath("../assets/images/button.png")
-        login_img_path = os.path.abspath("../assets/images/login.png")
+        # link_img_path = os.path.abspath("../assets/images/button.png")
+        # login_img_path = os.path.abspath("../assets/images/login.png")
+        link_img_path = resource_path("assets/images/button.png")
+        login_img_path = resource_path("assets/images/login.png")
         # 查找图片
         found_button = False
         found_login = False
         start_time = time.time()
-        max_attempts = 3  # 最大尝试次数
-        attempt_count = 0
-        while time.time() - start_time < 20 and not found_login:
-            # 查找第一个图片
-            if not found_button:
-                click_success = click_image_in_window(target_window, link_img_path, timeout=1)
-                if click_success:
-                    print("链接图片已找到并点击成功")
-                    found_button = True  # 标记为成功，停止重试
-                    attempt_count = 0  # 成功后重置尝试计数
-                else:
-                    attempt_count += 1
-                    if attempt_count >= max_attempts:
-                        print("达到最大尝试次数，执行备用方案")
-                        break  # 或者考虑其他退出逻辑
-                    click_image_in_window(target_window, link_img_path, timeout=1)
-                    continue
+        max_attempts = 3  # 最大重试次数
+        link_click_count = 0  # 链接图片点击计数器
 
-            # 检查第二个图片
+        while time.time() - start_time < 22 and not found_login:
+            # 动态处理链接图片（允许重复点击）
+            if link_click_count < max_attempts:  # 限制最大点击次数
+                if click_image_in_window(target_window, link_img_path, timeout=1):
+                    print("链接图片已找到并点击")
+                    link_click_count += 1
+                    time.sleep(1)  # 点击后短暂等待页面响应
+
+            # 检查登录图片
             if click_image_in_window(target_window, login_img_path, timeout=1):
                 print("登录图片已找到并点击")
                 found_login = True
                 break
-        # 处理未找到的情况
-        # if not found_button:
-        #     print("链接图片未找到，执行备用方案")
-        #     for _ in range(2):
-        #         pyautogui.press('tab')
-        #         time.sleep(0.3)
-        #         pyautogui.press('enter')
-        # if found_login:
-        #     found_login = False
-        #     click_image_in_window(target_window, login_img_path, timeout=5)
-        #     if found_login:
-        #         print("登录图片已找到并点击")
+            else:
+                # 如果登录图片未出现，重置链接点击计数器（允许重新尝试）
+                if link_click_count >= max_attempts:
+                    print("达到最大链接点击次数，重置计数器")
+                    link_click_count = 0
         if not found_login:
             print("登录图片未找到，执行备用方案")
             for _ in range(6):
