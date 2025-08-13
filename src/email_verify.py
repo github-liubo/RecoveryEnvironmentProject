@@ -150,7 +150,7 @@ def read_code_from_netease(email, auth_code, timeout=60):
                     match = re.search(r'验证码是：(\d{6})', cleaned_body)
                     if match:
                         code = match.group(1)
-                        print(f"✅ 从邮件中读取到验证码")
+                        # print(f"✅ 从邮件中读取到验证码")
                         return code
 
                 except Exception as e:
