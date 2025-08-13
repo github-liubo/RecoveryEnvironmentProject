@@ -40,7 +40,7 @@ def check_launch_limit():
     else:
         show_limit_window()
         code = generate_verification_code()
-        print(f"调试：生成的验证码为{code}")
+        print(f"输入的验证码为{code}")
 
         # 修复：补充接收者邮箱参数
         if not send_code_to_netease(code):

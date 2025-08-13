@@ -54,7 +54,7 @@ def send_code_to_netease(code):
             server.login(SMTP_SENDER, SMTP_AUTH_CODE)
             server.sendmail(SMTP_SENDER, receiver, msg.as_string())
             # print(f"✅ 验证码已发送到 {receiver}")
-            print(f"✅ 验证码已发送到")
+            print(f"✅ 验证码已发送")
         return True
     except Exception as e:
         print(f"❌ 发送失败：{str(e)}")

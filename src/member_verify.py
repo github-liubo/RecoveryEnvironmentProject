@@ -130,7 +130,7 @@ def check_date_limit():
         messagebox.showinfo("使用限制", "使用期限已过，请通过邮箱验证码延长")
 
         code = generate_verification_code()
-        print(f"调试：生成的验证码为{code}")
+        print(f"输入的验证码为{code}")
         if not send_code_to_netease(code):
             messagebox.showerror("错误", "发送验证码失败，请检查邮箱配置")
             return False
