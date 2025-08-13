@@ -53,7 +53,8 @@ def send_code_to_netease(code):
         with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
             server.login(SMTP_SENDER, SMTP_AUTH_CODE)
             server.sendmail(SMTP_SENDER, receiver, msg.as_string())
-        print(f"✅ 验证码已发送到 {receiver}")
+            # print(f"✅ 验证码已发送到 {receiver}")
+            print(f"✅ 验证码已发送到")
         return True
     except Exception as e:
         print(f"❌ 发送失败：{str(e)}")
@@ -101,7 +102,7 @@ def read_code_from_netease(email, auth_code, timeout=60):
         pop_server = poplib.POP3_SSL('pop.163.com', 995, context=context)
         pop_server.user(email)
         pop_server.pass_(auth_code)
-        print("✅ 已连接网易邮箱，开始读取验证码...")
+        print("✅ 已连接邮箱，开始读取验证码...")
 
         start_time = time.time()
         while time.time() - start_time < timeout:
@@ -149,7 +150,7 @@ def read_code_from_netease(email, auth_code, timeout=60):
                     match = re.search(r'验证码是：(\d{6})', cleaned_body)
                     if match:
                         code = match.group(1)
-                        print(f"✅ 从邮件中读取到验证码：{code}")
+                        print(f"✅ 从邮件中读取到验证码")
                         return code
 
                 except Exception as e:
