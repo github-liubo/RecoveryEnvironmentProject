@@ -9,8 +9,6 @@ from email.header import Header, decode_header
 from email.parser import BytesParser
 from bs4 import BeautifulSoup
 import tkinter as tk
-from tkinter import messagebox
-from tkinter import ttk
 from window_icon import get_icon_path
 # ======================
 # 配置参数（需替换为实际信息）

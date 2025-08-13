@@ -1,12 +1,11 @@
 import tkinter as tk
-from tkinter import messagebox
 import program_over
 from window_icon import get_icon_path
 from image_process_taskbar import load_title_bar_icon
 # 全局变量
 app_window = None
 status_label = None
-VERSION = "v1.18"  # 版本号配置
+VERSION = "v1.19"  # 版本号配置
 
 def show_progress_message():
     """显示恢复进度窗口（带自定义美化标题栏）"""
@@ -22,8 +21,8 @@ def show_progress_message():
     app_window.resizable(False, False)
 
     # 窗口尺寸与位置
-    window_width = 200
-    window_height = 120
+    window_width = 246
+    window_height = 140
     screen_height = app_window.winfo_screenheight()
     x = 0
     y = screen_height - window_height - 80
@@ -48,7 +47,6 @@ def show_progress_message():
         text="系 统 恢 复",
         font=("微软雅黑", 10, "bold"),
         bg="#2c3e50",
-
         fg="#ffffff",
         # padx=5
     )
@@ -90,8 +88,8 @@ def show_progress_message():
     status_label = tk.Label(
         content_frame,
         text="恢复中，先不要操作",
-        font=("微软雅黑", 12),
-        wraplength=200,
+        font=("微软雅黑", 14),
+        wraplength=240,
         justify="center",
         anchor = "center"
     )
@@ -118,7 +116,7 @@ def show_completion_message():
 
     if status_label and app_window:
         # 更新文本为青草色
-        status_label.config(text="已恢复，5秒后退出", fg="#32CD32")
+        status_label.config(text="恢复完毕，正在退出", fg="#32CD32")
 
         # 5秒后关闭窗口并终止程序
         def close_and_quit():

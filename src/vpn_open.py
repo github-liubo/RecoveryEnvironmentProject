@@ -1,4 +1,3 @@
-import os
 import subprocess
 import pyautogui
 import time
@@ -44,7 +43,7 @@ def vpn_auto_thread():
         max_attempts = 3  # 最大重试次数
         link_click_count = 0  # 链接图片点击计数器
 
-        while time.time() - start_time < 22 and not found_login:
+        while time.time() - start_time < 30 and not found_login:
             # 动态处理链接图片（允许重复点击）
             if link_click_count < max_attempts:  # 限制最大点击次数
                 if click_image_in_window(target_window, link_img_path, timeout=1):
@@ -64,6 +63,7 @@ def vpn_auto_thread():
                     link_click_count = 0
         if not found_login:
             print("登录图片未找到，执行备用方案")
+            time.sleep(1)
             for _ in range(6):
                 pyautogui.press('tab')
                 time.sleep(0.3)
